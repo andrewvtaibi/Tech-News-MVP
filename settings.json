@@ -1,0 +1,90 @@
+{
+  "max_total_items": 200,
+  "per_source_max_fraction": 0.4,
+  "per_source_max_count": 60,
+
+  "outputs": ["csv", "json", "html"],
+  "out_dir": "out",
+  "window_days": 7,
+
+  "only_new": false,
+  "seen_ttl_days": 30,
+  "allow_missing_timestamps": true,
+  "skip_write_when_empty": true,
+
+  "include_terms": [],
+  "exclude_terms": [],
+  "include_mode": "any",
+  "filter_fields": ["title", "summary"],
+  "ssl_insecure_hosts": ["www.fda.gov"],
+
+    "summary_max_words": 1300,
+  "summary_section_limits": {
+    "regulatory": 3,
+    "industry": 10,
+    "science": 8,
+    "watchlist": 6,
+     "earnings": 8
+  },
+  "watchlist_terms": ["Regeneron", "REGN", "CRISPR Therapeutics", "CRISPR"],
+  "highlight_watchlist": true,
+  "fetch_workers": 6,
+  "fetch_task_timeout_sec": 120,
+
+  "html_show_summaries_default": true,
+  "html_compact_mode_default": false,
+
+  "host_overrides": {
+    "newsroom.regeneron.com": { "timeout_sec": 45, "max_retries": 4 },
+    "ir.crisprtx.com": { "timeout_sec": 45, "max_retries": 4 }
+  },
+
+  "top_n": 10,
+
+  "score_weights": {
+    "watchlist": 3.0,
+    "recency_half_life_hours": 24,
+    "category_weights": {
+      "filings": 1.4,
+      "regulator": 1.8,
+      "company": 1.5,
+      "journal": 1.2,
+      "industry": 1.0,
+      "preprints": 0.4,
+      "general": 1.0
+    },
+    "sec_material_boost": 1.5,
+    "sec_boilerplate_penalty": 0.4
+  },
+
+  "email": {
+    "enabled": false,
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": 587,
+    "smtp_user": "andrewvtaibi@gmail.com",
+    "smtp_pass_env": "BIONEWS_SMTP_PASS",
+    "from": "andrewvtaibi@gmail.com",
+    "to": ["andrewvtaibi@gmail.com"],
+    "subject": "BioNews Daily",
+    "body": "Attached: BioNews report and CSV."
+  },
+
+  "digest": "daily",
+  "digest_presets": {
+    "daily": { "window_days": 1, "top_n": 10 },
+    "weekly": { "window_days": 7, "top_n": 15 }
+  },
+
+  "per_source_caps": {
+    "sec-latest-8k": 8,
+    "regn-8k": 4,
+    "crsp-8k": 4
+  },
+  "sec_material_only": true,
+  "sec_drop_boilerplate": true,
+    "sec_material_item_codes": 
+    ["1.01","1.02","2.01","2.02","2.03",
+    "2.05","2.06","3.01","3.02","4.01",
+    "5.02","5.03","7.01","8.01"]  
+}
+

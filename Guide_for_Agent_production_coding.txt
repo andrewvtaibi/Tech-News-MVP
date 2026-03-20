@@ -1,0 +1,348 @@
+# AI SOFTWARE AGENT BUILD PROTOCOL
+
+## (Autonomous Development With Embedded Rigor, Not Human Substitution)
+
+---
+
+## PURPOSE
+
+This protocol defines how AI agents must **independently produce production-quality software** while directly mitigating known failure modes of AI-generated code.
+
+The objective is not to defer responsibility to humans.
+The objective is to **embed engineering discipline inside the agent’s workflow** so that:
+
+* Correctness is verified, not assumed
+* Architecture emerges intentionally, not accidentally
+* Outputs are reproducible and inspectable
+* Systems scale beyond prototype without collapse
+
+---
+
+## CORE OPERATING MODEL
+
+AI agents must operate in **four explicit phases for every task**:
+
+1. **Specification**
+2. **Design**
+3. **Implementation**
+4. **Verification**
+
+No phase may be skipped or merged.
+
+---
+
+## 1. SPECIFICATION PHASE (MANDATORY)
+
+### Required Outputs
+
+* Explicit definition of:
+
+  * Inputs
+  * Outputs
+  * Constraints
+  * Edge cases
+  * Failure conditions
+
+### Enforcement Rules
+
+* Do not infer missing requirements silently
+* If ambiguity exists:
+
+  * Make assumptions explicit
+  * Tag them as assumptions
+
+### Deliverable Format
+
+* Structured spec (bullet or schema form)
+* Must be reviewable and testable
+
+---
+
+## 2. DESIGN PHASE (MANDATORY)
+
+### Required Outputs
+
+* System decomposition into:
+
+  * Modules
+  * Interfaces
+  * Data structures
+* Defined data flow between components
+
+### Design Constraints
+
+* Each module must have:
+
+  * A single responsibility
+  * Clearly defined inputs/outputs
+
+### Required Justifications
+
+* Why this structure was chosen
+* Tradeoffs considered (even briefly)
+
+### Prohibited Behavior
+
+* No direct transition from prompt → code
+* No monolithic “do everything” functions
+
+---
+
+## 3. IMPLEMENTATION PHASE
+
+### Requirements
+
+* Code must:
+
+  * Match the design exactly
+  * Avoid introducing new structure implicitly
+* If deviation occurs:
+
+  * Update design explicitly before proceeding
+
+### Determinism Requirements
+
+* All non-deterministic behavior must be:
+
+  * Controlled (e.g., seeded randomness)
+  * Documented
+
+### Dependency Rules
+
+* Each dependency must include:
+
+  * Purpose
+  * Justification
+* Prefer minimal dependency footprint
+
+---
+
+## 4. VERIFICATION PHASE (NON-OPTIONAL)
+
+### Required Test Types
+
+#### A. Specification Tests
+
+* Validate:
+
+  * Expected outputs
+  * Edge cases
+  * Failure modes
+
+#### B. Adversarial Tests
+
+* Intentionally attempt to break:
+
+  * Input validation
+  * Logic boundaries
+
+#### C. Invariant Checks
+
+* Confirm properties that must always hold
+
+  * Example: dimensions, ranges, schema validity
+
+---
+
+## 5. SELF-CRITIQUE LOOP (MANDATORY)
+
+After implementation, the agent must perform:
+
+### A. Structural Audit
+
+* Does code match design?
+* Are responsibilities cleanly separated?
+
+### B. Logic Audit
+
+* Are there hidden assumptions?
+* Are algorithms correct or just plausible?
+
+### C. Failure Analysis
+
+* What inputs break this system?
+* Where does it degrade silently?
+
+### D. Simplification Pass
+
+* Can complexity be reduced without loss of function?
+
+---
+
+## 6. ERROR HANDLING STANDARD
+
+### Requirements
+
+* Every function must define:
+
+  * Expected failure modes
+  * Explicit error behavior
+
+### Prohibited
+
+* Silent failures
+* Generic “catch-all” error suppression
+
+### Preferred
+
+* Clear, actionable error messages
+* Deterministic failure states
+
+---
+
+## 7. OBSERVABILITY BUILT-IN
+
+### Minimum Requirements
+
+* Logging at:
+
+  * Entry/exit points of major functions
+  * Failure conditions
+* Logs must include:
+
+  * Context
+  * Inputs (when safe)
+  * State transitions
+
+---
+
+## 8. PERFORMANCE AWARENESS (LIGHTWEIGHT, NOT ENTERPRISE)
+
+### Required Checks
+
+* Identify:
+
+  * Worst-case complexity
+  * Obvious inefficiencies
+
+### Rule
+
+* Avoid:
+
+  * Quadratic behavior on scalable inputs
+  * Unbounded memory growth
+
+No premature optimization, but no negligent inefficiency.
+
+---
+
+## 9. REPRODUCIBILITY STANDARD
+
+### Requirements
+
+* Outputs must be reproducible given:
+
+  * Same inputs
+  * Same configuration
+
+### Must Track
+
+* Configuration parameters
+* Random seeds (if applicable)
+* Input state
+
+---
+
+## 10. DOCUMENTATION OF INTENT (MINIMAL BUT SUFFICIENT)
+
+### Required
+
+* Each module must state:
+
+  * What it does
+  * Inputs/outputs
+  * Key assumptions
+
+### Not Required
+
+* Excessive prose
+* Redundant comments
+
+---
+
+## 11. ANTI-PATTERN DETECTION (AUTO-CORRECTION)
+
+Agents must actively detect and correct:
+
+* Mixed coding styles across modules
+* Duplicate logic
+* Unused code paths
+* Overly complex functions
+
+If detected:
+→ Refactor before proceeding
+
+---
+
+## 12. SAFE USE OF GENERATED CODE
+
+### Allowed
+
+* Boilerplate generation
+* Test scaffolding
+* Refactoring suggestions
+
+### Restricted (Require Extra Validation)
+
+* Algorithms
+* Data transformations
+* External API integrations
+
+---
+
+## 13. DECISION TRACEABILITY (LIGHTWEIGHT)
+
+### Requirement
+
+* For non-trivial decisions, record:
+
+  * What was chosen
+  * Why
+
+### Purpose
+
+* Enables reproducibility without heavy documentation overhead
+
+---
+
+## 14. COMPLETION CRITERIA
+
+A task is only complete when:
+
+* Specification exists and is satisfied
+* Design is coherent and followed
+* Code is internally consistent
+* Tests cover normal + edge + failure cases
+* Self-critique has been performed
+* Outputs are reproducible
+
+---
+
+## FINAL OPERATING PRINCIPLE
+
+> The agent must behave as a disciplined engineer, not a code generator.
+
+Speed is acceptable.
+Unverified assumptions are not.
+
+---
+
+## EXECUTION CHECKLIST (ENFORCED)
+
+Before final output, confirm:
+
+* [ ] Specification is explicit
+* [ ] Design is defined and followed
+* [ ] Code matches design
+* [ ] Edge cases are handled
+* [ ] Failure modes are explicit
+* [ ] Tests validate behavior, not just execution
+* [ ] Outputs are reproducible
+* [ ] No obvious inefficiencies exist
+* [ ] Code is internally consistent
+
+If any item fails → revise before completion.
+
+---
+
+**End of Protocol**

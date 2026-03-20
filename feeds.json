@@ -1,0 +1,46 @@
+[
+  { "tag": "nature-biotech", "url": "https://www.nature.com/nbt/current.rss", "category": "journal" },
+  { "tag": "fiercebiotech",  "url": "https://www.fiercebiotech.com/rss/xml", "category": "industry" },
+  { "tag": "fiercepharma",   "url": "https://www.fiercepharma.com/rss/xml",  "category": "industry" },
+  { "tag": "stat-biotech",   "url": "https://www.statnews.com/category/biotech/feed/", "category": "industry" },
+  { "tag": "endpoints",      "url": "https://endpts.com/feed", "category": "industry" },
+  { "tag": "biopharmadive",  "url": "https://www.biopharmadive.com/feeds/news", "category": "industry" },
+  { "tag": "biospace-latest", "url": "https://www.biospace.com/rss", "category": "industry" },
+  { "tag": "pharmaphorum",   "url": "https://pharmaphorum.com/rssfeed", "category": "industry" },
+  { "tag": "prn-biotech",    "url": "https://www.prnewswire.com/rss/biotechnology-news.rss", "category": "company" },
+  { "tag": "prn-fda",        "url": "https://www.prnewswire.com/rss/fda-approval.rss", "category": "regulator" },
+  { "tag": "prn-clinical",   "url": "https://www.prnewswire.com/rss/clinical-trials--medical-discoveries.rss", "category": "industry" },
+  { "tag": "globe-biotech",  "url": "https://www.globenewswire.com/Rss/subject/14/biotechnology.rss", "category": "company" },
+
+  { "tag": "arxiv-qbio",     "url": "https://rss.arxiv.org/rss/q-bio", "category": "preprints" },
+
+  { "tag": "fda-medwatch",   "url": "http://www.fda.gov/AboutFDA/ContactFDA/StayInformed/RSSFeeds/MedWatch/rss.xml", "category": "regulator" },
+  { "tag": "sec-latest-8k",  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=8-K&owner=include&count=100&output=atom", "category": "filings" },
+{
+  "tag": "cnbc-biotech",
+  "url": "https://news.google.com/rss/search?q=site:cnbc.com+%28biotech+OR+pharma+OR+drug+OR+FDA+OR+clinical+trial+OR+phase%29&hl=en-US&gl=US&ceid=US:en",
+  "category": "industry"
+},
+{
+  "tag": "wsj-health-biotech",
+  "url": "https://news.google.com/rss/search?q=site:wsj.com+%28biotech+OR+pharmaceutical+OR+drug+OR+clinical+trial+OR+FDA%29&hl=en-US&gl=US&ceid=US:en",
+  "category": "industry"
+},
+{
+  "tag": "ft-health",
+  "url": "https://news.google.com/rss/search?q=site:ft.com+%28biotech+OR+pharma+OR+drug+OR+clinical+trial+OR+FDA%29&hl=en-US&gl=US&ceid=US:en",
+  "category": "industry"
+},
+{
+  "tag": "marketwatch-biotech",
+  "url": "https://news.google.com/rss/search?q=site:marketwatch.com+%28biotech+OR+pharma+OR+drug+OR+FDA+OR+clinical+trial%29&hl=en-US&gl=US&ceid=US:en",
+  "category": "industry"
+},
+{
+  "tag": "biospace",
+  "url": "https://www.biospace.com/rss",
+  "category": "industry"
+}
+
+]
+

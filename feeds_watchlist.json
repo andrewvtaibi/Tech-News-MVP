@@ -1,0 +1,5 @@
+[
+  { "tag": "regn-8k", "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=000872589&type=8-K&count=100&output=atom", "category": "filings" },
+
+  { "tag": "crsp-8k", "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001674416&type=8-K&count=100&output=atom", "category": "filings" }
+]
