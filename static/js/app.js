@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
       state.days = parseInt(btn.dataset.days, 10);
       if (searchInput.value.trim()) doSearch();
+      if (state.csvFile) doUpload();
     });
   });
 
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
       state.contentType = btn.dataset.type;
       if (searchInput.value.trim()) doSearch();
+      if (state.csvFile) doUpload();
     });
   });
 

@@ -40,8 +40,60 @@ _SEC_DOMAINS = {"sec.gov", "edgar.sec.gov"}
 # arXiv domain
 _ARXIV_DOMAIN = "arxiv.org"
 
-# Press-release source domains (used for domain-based filtering)
-_PR_DOMAINS = {"prnewswire.com", "globenewswire.com", "businesswire.com"}
+# Words excluded when building the relevance-filter token set.
+_STOPWORDS = {
+    "inc", "corp", "ltd", "llc", "co", "the", "and", "&", "of",
+    "a", "an", "for", "in", "on", "at", "by",
+}
+
+# PR wire domains used for per-site Google News queries.
+_PR_WIRE_DOMAINS = [
+    "prnewswire.com",
+    "businesswire.com",
+    "globenewswire.com",
+]
+
+_GNEWS_BASE = (
+    "https://news.google.com/rss/search"
+    "?hl=en-US&gl=US&ceid=US%3Aen&q="
+)
+
+
+def _pr_wire_urls(company: str) -> list[str]:
+    """
+    Build one Google News RSS query per PR wire domain.
+    Quoting the company name forces an exact-phrase match;
+    a single site: operator per query is more reliably honoured
+    than a combined OR expression.
+    """
+    urls = []
+    for domain in _PR_WIRE_DOMAINS:
+        q = urllib.parse.quote_plus(f'"{company}" site:{domain}')
+        urls.append(_GNEWS_BASE + q)
+    return urls
+
+
+def _relevant_tokens(company: str) -> list[str]:
+    """
+    Return the significant lowercase words from *company* that an
+    article title must contain at least one of to be considered relevant.
+    """
+    return [
+        w for w in company.lower().split()
+        if w not in _STOPWORDS and len(w) > 1
+    ]
+
+
+def _is_relevant(item: dict, tokens: list[str]) -> bool:
+    """
+    Return True if the item title contains at least one token from
+    the company name.  Keeps the filter permissive enough that
+    ticker-symbol-only mentions are not accidentally dropped.
+    """
+    if not tokens:
+        return True
+    title = (item.get("title") or "").lower()
+    return any(tok in title for tok in tokens)
 
 
 # ---------------------------------------------------------------------------
@@ -67,17 +119,6 @@ def _fetch_raw(url: str) -> bytes:
 
 def _headlines_url(company: str) -> str:
     q = urllib.parse.quote_plus(company)
-    return (
-        f"https://news.google.com/rss/search"
-        f"?q={q}&hl=en-US&gl=US&ceid=US%3Aen"
-    )
-
-
-def _press_release_url(company: str) -> str:
-    q = urllib.parse.quote_plus(
-        f"{company} "
-        "site:prnewswire.com OR site:globenewswire.com OR site:businesswire.com"
-    )
     return (
         f"https://news.google.com/rss/search"
         f"?q={q}&hl=en-US&gl=US&ceid=US%3Aen"
@@ -176,23 +217,20 @@ def _filter_and_convert(
     raw_items: list[dict],
     cutoff: datetime,
     *,
-    pr_only: bool = False,
+    relevance_tokens: list[str] | None = None,
 ) -> list[NewsItem]:
     """
-    Apply date window, SEC/arXiv exclusion, optional press-release domain
-    filter, deduplication, and conversion to NewsItem.
+    Apply date window, SEC/arXiv exclusion, optional company-relevance
+    check, deduplication, and conversion to NewsItem.
     """
+    tokens = relevance_tokens or []
     filtered = [
         it for it in raw_items
         if _is_within_window(it, cutoff)
         and not _is_sec_item(it)
         and not _is_arxiv_item(it)
+        and _is_relevant(it, tokens)
     ]
-
-    # For press releases, scoping is handled by the query URL itself
-    # (site:prnewswire.com OR site:globenewswire.com OR site:businesswire.com).
-    # Google News returns redirect links (news.google.com/...) for all items,
-    # so we cannot reliably filter by link domain here.
 
     filtered = _deduplicate(filtered)[:MAX_RESULTS_PER_QUERY]
 
@@ -229,23 +267,35 @@ class NewsService:
             from app.fetch import parse_and_normalize
             _meta, items = parse_and_normalize(raw)
             cutoff = datetime.now(timezone.utc) - timedelta(days=days)
-            return _filter_and_convert(items, cutoff, pr_only=False)
+            tokens = _relevant_tokens(company)
+            return _filter_and_convert(items, cutoff, relevance_tokens=tokens)
         except Exception:
             return []
 
     def fetch_press_releases(self, company: str, days: int) -> list[NewsItem]:
         """
-        Fetch recent press releases for *company* scoped to PR wire domains.
-        Returns [] on any failure.
+        Fetch recent press releases for *company* from PR Newswire,
+        Business Wire, and GlobeNewswire via targeted Google News RSS
+        queries (one per domain, company name quoted for exact match).
+        Results from all three are merged, deduplicated, date-filtered,
+        and checked for company-name relevance.
+        Returns [] if all sources fail.
         """
         try:
-            url = _press_release_url(company)
-            raw = _fetch_raw(url)
-            if not raw:
-                return []
             from app.fetch import parse_and_normalize
-            _meta, items = parse_and_normalize(raw)
             cutoff = datetime.now(timezone.utc) - timedelta(days=days)
-            return _filter_and_convert(items, cutoff, pr_only=True)
+            tokens = _relevant_tokens(company)
+            all_raw: list[dict] = []
+
+            for url in _pr_wire_urls(company):
+                raw = _fetch_raw(url)
+                if not raw:
+                    continue
+                _meta, items = parse_and_normalize(raw)
+                all_raw.extend(items)
+
+            return _filter_and_convert(
+                all_raw, cutoff, relevance_tokens=tokens
+            )
         except Exception:
             return []

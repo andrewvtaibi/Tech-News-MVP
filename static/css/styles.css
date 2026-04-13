@@ -276,6 +276,8 @@ body {
   cursor: pointer;
   transition: background 0.15s;
   display: none;
+  position: relative;
+  z-index: 1;
 }
 
 .csv-submit-btn.visible {
