@@ -58,7 +58,7 @@ jobs:
 
   build-macos:
     name: macOS disk image
-    runs-on: macos-latest
+    runs-on: macos-15-intel
 
     steps:
       - name: Checkout code
