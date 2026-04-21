@@ -31,7 +31,7 @@ from server.services.news import NewsService
 from server.services.ticker import TickerService
 from server.security.limiter import limiter
 
-logger = logging.getLogger("bionews.server")
+logger = logging.getLogger("industry-news.server")
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -100,13 +100,13 @@ def create_app() -> FastAPI:
         app.state.ticker_service = TickerService.from_data_file()
         app.state.news_service = NewsService()
         logger.info(
-            "BioNews server started. "
+            "Industry News server started. "
             f"Ticker entries: {len(app.state.ticker_service)}. "
             f"Cache TTL: {cache_ttl}s."
         )
         yield
         # Shutdown: nothing to clean up for in-memory services
-        logger.info("BioNews server shutting down.")
+        logger.info("Industry News server shutting down.")
 
     app = FastAPI(
         title="Company Reports and Information Engine",

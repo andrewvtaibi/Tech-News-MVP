@@ -1,5 +1,5 @@
 # tests/conftest.py
-# Shared pytest fixtures for the BioNews webapp test suite.
+# Shared pytest fixtures for the Industry News webapp test suite.
 # Inputs:  none (fixtures are injected by pytest)
 # Outputs: test client, mock RSS bytes, mock ticker data
 

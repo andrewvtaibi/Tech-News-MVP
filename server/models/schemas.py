@@ -1,5 +1,5 @@
 # server/models/schemas.py
-# Pydantic request/response models for the BioNews webapp API.
+# Pydantic request/response models for the Industry News webapp API.
 # Inputs:  raw user-facing query/upload parameters
 # Outputs: typed, validated Python objects consumed by routes and services
 # Assumptions: days is constrained to exactly 7 or 30; content_type is an enum.

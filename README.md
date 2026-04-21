@@ -1,4 +1,4 @@
-# Company Reports and Information Engine
+# Industry News — Company Reports and Information Engine
 
 A lightweight tool for searching companies or ticker symbols and
 retrieving headlines, press releases, and interactive stock charts.
@@ -11,7 +11,7 @@ retrieving headlines, press releases, and interactive stock charts.
 
 **One step:**
 
-> Double-click **`Launch BioNews.bat`** in Windows Explorer.
+> Double-click **`Launch Industry News.bat`** in Windows Explorer.
 
 The browser opens automatically to `http://localhost:8000`.
 Keep the black window open while you use the app — closing it
@@ -58,7 +58,7 @@ An interactive TradingView chart for the resolved ticker symbol.
 If a ticker cannot be resolved, a clear message is shown.
 
 ### CSV Upload
-Create a plain `.csv` file with one company name or ticker per row:
+Create a plain `.csv` file with one company name or ticker per row (no headers please):
 
 ```
 company
@@ -80,8 +80,10 @@ returns results for each entry, collapsible by company.
 | Symptom | What to check |
 |---|---|
 | Browser says "site cannot be reached" | Make sure the launcher window is still open |
-| Launcher window closed immediately | Open `logs/launch.log` for the error (Notepad on Windows, TextEdit on Mac) |
-| "Virtual environment not found" message | See First-Time Setup below for your OS |
+| Launcher window closed immediately | Open `logs/launch.log` for the error
+(Notepad on Windows, TextEdit on Mac) |
+| "Virtual environment not found" message | See First-Time Setup below
+for your OS |
 | No results returned | Try a longer timeframe (Past Month), or check your internet connection |
 | Press releases empty | Some companies publish infrequently; try Past Month |
 | Stock chart blank or not loading | Ticker not resolved — try the exact ticker symbol (e.g. NVO, PFE); the chart requires an internet connection to load |
@@ -103,19 +105,20 @@ The last few lines will show the specific error.
 
 ### Windows First-Time Setup
 
-This is only needed once. If `Launch BioNews.bat` already works, skip this.
+This is only needed once.
+If `Launch Industry News.bat` already works, skip this.
 
 1. Open a terminal (search "cmd" in the Windows Start menu).
 2. Navigate to the project folder:
    ```
-   cd "path\to\Bio-news-mvp"
+   cd "path\to\Industry-News-MVP"
    ```
 3. Create the virtual environment and install dependencies:
    ```
    python -m venv .venv
    .venv\Scripts\python.exe -m pip install -r requirements.txt
    ```
-4. Close the terminal. Double-click `Launch BioNews.bat`.
+4. Close the terminal. Double-click `Launch Industry News.bat`.
 
 ---
 
@@ -138,13 +141,13 @@ and reopen Terminal.
 **Step 2 — Navigate to the project folder.**
 
 ```
-cd path/to/Bio-news-mvp
+cd path/to/Industry-News-MVP
 ```
 
-Replace `path/to/Bio-news-mvp` with the actual location, for example:
+Replace `path/to/Industry-News-MVP` with the actual location, for example:
 
 ```
-cd ~/Downloads/Bio-news-mvp
+cd ~/Downloads/Industry-News-MVP
 ```
 
 **Step 3 — Create the virtual environment and install dependencies.**
@@ -211,19 +214,71 @@ until the server is restarted.
 
 ---
 
+## Building a Windows Installer (Developer)
+
+This produces a single `IndustryNews-Setup.exe` that users download
+and double-click — no Python or Git required on their machine.
+
+### Step 1 — Install build tools (one time)
+
+```
+pip install pyinstaller
+```
+
+Download and install
+[Inno Setup 6](https://jrsoftware.org/isinfo.php) (free).
+
+### Step 2 — Bundle the app with PyInstaller
+
+Run from the project root with the venv active:
+
+```
+pyinstaller industry_news.spec
+```
+
+Output: `dist\IndustryNews\` (a self-contained folder with Python
+bundled in).
+
+### Step 3 — Build the installer with Inno Setup
+
+Open `installer\industry_news.iss` in the Inno Setup IDE and
+click **Build**, or run from the command line:
+
+```
+iscc installer\industry_news.iss
+```
+
+Output: `installer\Output\IndustryNews-Setup.exe`
+
+### Step 4 — Publish to GitHub Releases
+
+1. Go to your repo → **Releases** → **Draft a new release**
+2. Tag it (e.g. `v1.0.0`)
+3. Upload `IndustryNews-Setup.exe`
+4. Publish
+
+Users then download a single file and run a standard install wizard
+that optionally creates a desktop shortcut.
+
+---
+
 ## Project Structure (Reference)
 
 ```
-Bio-news-mvp/
-  Launch BioNews.bat   <- double-click to start (Windows)
-  launch_macos.sh      <- double-click to start (Mac)
-  launch.py            <- launcher logic (auto-opens browser, cross-platform)
-  server/              <- FastAPI backend
-  static/              <- HTML/CSS/JS frontend
-  data/tickers.json    <- ticker symbol lookup table
-  tests/               <- automated test suite
-  logs/launch.log      <- startup log (check here on errors)
-  app/                 <- original CLI aggregator (unchanged)
+Industry-News-MVP/
+  Launch Industry News.bat  <- double-click to start (Windows)
+  launch_macos.sh           <- double-click to start (Mac)
+  launch.py                 <- launcher logic (cross-platform)
+  industry_news.spec        <- PyInstaller build spec
+  installer/
+    industry_news.iss       <- Inno Setup installer script
+    Output/                 <- built installer goes here
+  server/                   <- FastAPI backend
+  static/                   <- HTML/CSS/JS frontend
+  data/tickers.json         <- ticker symbol lookup table
+  tests/                    <- automated test suite
+  logs/launch.log           <- startup log (check here on errors)
+  app/                      <- original CLI aggregator (unchanged)
 ```
 
 ---

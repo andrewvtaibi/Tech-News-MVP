@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "BioNews: Run server (uvicorn)",
+      "name": "Industry News: Run server (uvicorn)",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -19,7 +19,7 @@
       "jinja": true
     },
     {
-      "name": "BioNews: Run tests (pytest)",
+      "name": "Industry News: Run tests (pytest)",
       "type": "debugpy",
       "request": "launch",
       "module": "pytest",
