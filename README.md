@@ -33,24 +33,8 @@ market research, etc).
 > Click **More info** → **Run anyway**. The app is safe.
 
 ---
-
-### Mac
-
-1. Go to the
-   [**Releases page**](../../releases/latest)
-   of this repository.
-2. Under **Assets**, download **`IndustryNews-vX.X.X.dmg`**.
-3. Double-click the downloaded `.dmg` file.
-4. In the window that opens, drag **Industry News** into the
-   **Applications** folder.
-5. Open **Launchpad** or your **Applications** folder and
-   double-click **Industry News**.
-
-> **"Cannot be opened because Apple cannot verify it" warning?**
-> This is normal for apps that aren't sold through the App Store.
-> **Right-click** (or Control+click) the app icon →
-> click **Open** → click **Open** again.
-> You only need to do this once.
+Mac version removed because attempts have shown that it cannot be effectively
+used without significant changes and an apple developer license (sorry)
 
 ---
 
