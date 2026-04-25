@@ -1,7 +1,14 @@
 # Industry News — Company Reports and Information Engine
 
+> **Non-Commercial Use Only.**
+> This tool is provided free of charge strictly for personal,
+> educational, and non-commercial purposes.
+> Any commercial use is expressly prohibited and constitutes
+> an immediate termination of all rights granted under the
+> [license](LICENSE).
+
 Search any single or batch of companies and instantly get recent
-headlines, official press releases, and an interactive stock
+headlines, official press releases, and interactive stock
 charts — all in one place, completely free.
 
 From the creator: I have CSV files containing lists of companies
