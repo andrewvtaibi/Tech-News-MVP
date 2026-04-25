@@ -104,8 +104,14 @@ async def search(
             items=[],
         )
 
-    # Check cache
-    cache_key = cache.make_key(clean_q, content_type.value, days.value)
+    # Cache key uses the resolved canonical name when available, so
+    # "MSFT" and "Microsoft" share a single cache entry.
+    cache_subject = (
+        resolved.company_name if resolved.found else clean_q
+    )
+    cache_key = cache.make_key(
+        cache_subject, content_type.value, days.value
+    )
     cached = cache.get(cache_key)
     if cached is not None:
         return SearchResponse(

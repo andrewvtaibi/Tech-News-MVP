@@ -29,11 +29,19 @@ class ResolvedCompany:
 _DATA_FILE = Path(__file__).resolve().parents[2] / "data" / "tickers.json"
 
 # Allowed characters in a query (letters, digits, spaces, hyphens, ampersands,
-# periods). Anything else indicates noise / injection attempt.
-_CLEAN_PATTERN = re.compile(r"^[A-Za-z0-9 &\-\.]+$")
+# periods, colons). Colon supports EXCHANGE:TICKER format (e.g. TSE:7974).
+# Anything else indicates noise / injection attempt.
+_CLEAN_PATTERN = re.compile(r"^[A-Za-z0-9 &\-\.:]+$")
 
-# Matches a bare ticker symbol: 1–5 uppercase letters only.
-_TICKER_FORMAT = re.compile(r"^[A-Z]{1,5}$")
+# Matches a bare ticker symbol. Accepts:
+#   - 1-6 uppercase letters:                AAPL, MSFT, F, BRK
+#   - dot share-class suffix:               BRK.A, BRK.B, NESN.SW
+#   - exchange-prefixed (digits allowed):   TSE:7974, LSE:BP, ASX:CBA
+# Pure numeric inputs (e.g. "12345") are intentionally rejected to
+# avoid treating arbitrary numbers as US-exchange tickers.
+_TICKER_FORMAT = re.compile(
+    r"^(?:[A-Z]{2,6}:[A-Z0-9]{1,6}|[A-Z]{1,6})(\.[A-Z]{1,3})?$"
+)
 
 
 class TickerService:

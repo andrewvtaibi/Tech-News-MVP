@@ -66,11 +66,22 @@ class TestTickerServiceResolve:
         assert result.found is True
         assert result.ticker == "REGN"
 
-    def test_resolve_unknown_query_returns_not_found(self, service):
-        result = service.resolve("ZZZZZ")
+    def test_resolve_unknown_name_returns_not_found(self, service):
+        # A multi-word string that doesn't match any ticker pattern
+        # should yield found=False with no ticker (treat as private /
+        # unrecognized company name).
+        result = service.resolve("Unknown Random Company")
         assert result.found is False
         assert result.ticker is None
-        assert result.company_name == "ZZZZZ"  # raw input preserved
+        assert result.company_name == "Unknown Random Company"
+
+    def test_resolve_unknown_ticker_format_passes_through(self, service):
+        # A bare 1-5 letter all-caps input that isn't in the hint map
+        # should still pass through as a ticker (let TradingView resolve).
+        result = service.resolve("ZZZZZ")
+        assert result.found is False
+        assert result.ticker == "ZZZZZ"
+        assert result.company_name == "ZZZZZ"
 
     def test_resolve_empty_string_returns_not_found(self, service):
         result = service.resolve("")
@@ -127,8 +138,12 @@ class TestTickerServiceInvariants:
             if result.found:
                 assert result.ticker is not None
 
-    def test_found_false_implies_ticker_none(self, service):
-        result = service.resolve("NOTAREAL")
+    def test_found_false_for_non_ticker_implies_ticker_none(self, service):
+        # Inputs that don't look like tickers (multi-word names, very
+        # long strings) should still yield ticker=None when not in the
+        # hint map. Inputs that look like tickers pass through (covered
+        # by test_resolve_unknown_ticker_format_passes_through).
+        result = service.resolve("Some Unknown Company Inc")
         assert result.found is False
         assert result.ticker is None
 

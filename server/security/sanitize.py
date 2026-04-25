@@ -26,8 +26,9 @@ _MAX_CSV_BYTES = 1_048_576      # 1 MB
 _MAX_CSV_ROWS  = 50
 
 # Characters allowed in a sanitized query:
-# letters, digits, spaces, hyphens, ampersands, periods, commas
-_ALLOWED_RE = re.compile(r"[^A-Za-z0-9 &\-\.,]")
+# letters, digits, spaces, hyphens, ampersands, periods, commas, colons.
+# Colon supports exchange-prefixed tickers (e.g. TSE:7974, LSE:BP).
+_ALLOWED_RE = re.compile(r"[^A-Za-z0-9 &\-\.,:]")
 
 # Dangerous tag blocks (script, style, etc.) including their content
 _DANGEROUS_TAG_BLOCK_RE = re.compile(

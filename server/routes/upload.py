@@ -107,7 +107,12 @@ async def upload_csv(
             )
             continue
 
-        cache_key = cache.make_key(clean_q, content_type.value, days.value)
+        cache_subject = (
+            resolved.company_name if resolved.found else clean_q
+        )
+        cache_key = cache.make_key(
+            cache_subject, content_type.value, days.value
+        )
         cached = cache.get(cache_key)
         if cached is not None:
             results.append(

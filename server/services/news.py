@@ -118,7 +118,10 @@ def _fetch_raw(url: str) -> bytes:
 # ---------------------------------------------------------------------------
 
 def _headlines_url(company: str) -> str:
-    q = urllib.parse.quote_plus(company)
+    # Quote the company name so common-word names ("Apple", "Target",
+    # "Block", "Visa", "Ford") don't return generic dictionary-sense
+    # articles. For multi-word names the quotes also force exact phrase.
+    q = urllib.parse.quote_plus(f'"{company}"')
     return (
         f"https://news.google.com/rss/search"
         f"?q={q}&hl=en-US&gl=US&ceid=US%3Aen"
@@ -141,7 +144,9 @@ def _parse_date(iso: Optional[str]) -> Optional[datetime]:
 def _is_within_window(item: dict, cutoff: datetime) -> bool:
     dt = _parse_date(item.get("published_iso"))
     if dt is None:
-        return True  # keep items with missing dates (may be very recent)
+        # Drop items with missing dates — they're more likely stale
+        # than "very recent" and would pollute time-windowed views.
+        return False
     return dt >= cutoff
 
 

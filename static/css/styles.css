@@ -480,6 +480,14 @@ body {
   color: var(--accent-blue);
 }
 
+.stock-widget-disclaimer {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: italic;
+  margin: -8px 0 10px 0;
+  opacity: 0.75;
+}
+
 .stock-no-ticker {
   color: var(--muted);
   font-size: 14px;

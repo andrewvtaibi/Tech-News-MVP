@@ -109,7 +109,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // CSV submit
   csvSubmitBtn.addEventListener('click', doUpload);
+
+  // Auto-restore the most recently used CSV (across sessions)
+  tryRestoreSavedCsv();
 });
+
+// ---------------------------------------------------------------------------
+// CSV persistence
+// ---------------------------------------------------------------------------
+
+const CSV_STORAGE_KEY  = 'industryNews:lastCsv';
+const CSV_NAME_KEY     = 'industryNews:lastCsvName';
+
+function tryRestoreSavedCsv() {
+  let text, name;
+  try {
+    text = localStorage.getItem(CSV_STORAGE_KEY);
+    name = localStorage.getItem(CSV_NAME_KEY);
+  } catch (_) {
+    return; // private browsing / disabled storage — skip silently
+  }
+  if (!text || !name) return;
+
+  try {
+    const file = new File([text], name, { type: 'text/csv' });
+    state.csvFile = file;
+    csvFilename.textContent = name + ' (restored)';
+    csvSubmitBtn.classList.add('visible');
+  } catch (_) {
+    // Older browsers without File constructor — ignore.
+  }
+}
+
+function persistCsv(file) {
+  if (!file || typeof file.text !== 'function') return;
+  file.text().then(text => {
+    try {
+      localStorage.setItem(CSV_STORAGE_KEY, text);
+      localStorage.setItem(CSV_NAME_KEY, file.name);
+    } catch (_) {
+      // Quota exceeded or storage disabled — non-fatal.
+    }
+  }).catch(() => { /* ignore */ });
+}
 
 // ---------------------------------------------------------------------------
 // Search
@@ -168,6 +210,7 @@ async function doUpload() {
     }
     const data = await resp.json();
     renderBatchResults(data);
+    persistCsv(state.csvFile);
   } catch (e) {
     showError(e.message || 'Upload failed. Please try again.');
   }
@@ -340,7 +383,7 @@ function renderStockWidget(data) {
   const name = escHtml(data.resolved.company_name || data.query);
 
   if (!ticker) {
-    const looksLikeTicker = /^[A-Z]{1,5}$/.test(
+    const looksLikeTicker = isTickerLike(
       data.resolved.company_name || data.query
     );
     const msg = looksLikeTicker
@@ -360,6 +403,9 @@ function renderStockWidget(data) {
     <div class="stock-widget-header">
       Stock chart: <span class="ticker-display">${escHtml(ticker)}</span>
       — ${name}
+    </div>
+    <div class="stock-widget-disclaimer">
+      Prices delayed by at least 15 minutes.
     </div>
     <div style="height:${STOCK_WIDGET_HEIGHT}px;width:100%">
       <div class="tradingview-widget-container"
@@ -394,7 +440,7 @@ function makeStockSection(data) {
   body.className = 'company-body';
 
   if (!ticker) {
-    const looksLikeTicker = /^[A-Z]{1,5}$/.test(
+    const looksLikeTicker = isTickerLike(
       data.resolved.company_name || data.query
     );
     const msg = looksLikeTicker
@@ -406,6 +452,9 @@ function makeStockSection(data) {
     const containerId = `tv-batch-${escAttr(ticker)}-${Date.now()}`;
     body.innerHTML = `
       <div style="padding:16px">
+        <div class="stock-widget-disclaimer">
+          Prices delayed by at least 15 minutes.
+        </div>
         <div style="height:${STOCK_WIDGET_HEIGHT}px;width:100%">
           <div class="tradingview-widget-container"
                id="${containerId}"
@@ -440,12 +489,29 @@ function injectTradingViewWidget(ticker, containerId, days) {
   inner.style.cssText = 'height:calc(100% - 32px);width:100%';
   container.appendChild(inner);
 
+  let resolved = false;
+  const showFallback = (reason) => {
+    if (resolved) return;
+    resolved = true;
+    container.innerHTML = `
+      <p class="stock-no-ticker" style="padding:16px">
+        Stock chart could not be loaded for
+        <strong>${escHtml(ticker)}</strong>.
+        ${reason ? escHtml(reason) + ' ' : ''}Check your internet connection
+        or verify the ticker symbol is valid.
+      </p>
+    `;
+  };
+
   // TradingView reads the script's textContent for widget options
   const script = document.createElement('script');
   script.type = 'text/javascript';
   script.src =
     'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
   script.async = true;
+  script.onerror = () => showFallback(
+    'TradingView script failed to load.'
+  );
   script.text = JSON.stringify({
     autosize: true,
     symbol: ticker,
@@ -461,6 +527,15 @@ function injectTradingViewWidget(ticker, containerId, days) {
     support_host: 'https://www.tradingview.com',
   });
   container.appendChild(script);
+
+  // If no iframe has been rendered after 6 seconds, assume failure.
+  setTimeout(() => {
+    if (!container.querySelector('iframe')) {
+      showFallback('');
+    } else {
+      resolved = true;
+    }
+  }, 6000);
 }
 
 // ---------------------------------------------------------------------------
@@ -495,6 +570,15 @@ function clearResults() {
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
+
+// Returns true if *str* looks like a ticker symbol rather than a
+// company name. Permissive enough to cover BRK.A, TSE:7974, etc.
+function isTickerLike(str) {
+  if (!str) return false;
+  const s = String(str).trim();
+  if (s.length > 12 || s.includes(' ')) return false;
+  return /^[A-Z0-9.:]+$/.test(s);
+}
 
 function escHtml(str) {
   if (!str) return '';
